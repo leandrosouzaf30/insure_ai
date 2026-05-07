@@ -1,51 +1,143 @@
-# 🤖 Chatbot RAG com Gemini 3 Flash
+# 🤖 Chatbot RAG com Gemini 3 Flash — FastAPI
 
-Este projeto consiste num Chatbot com capacidades de **RAG (Retrieval-Augmented Generation)** utilizando o SDK mais recente do Google Generative AI e o modelo de última geração **Gemini 3 Flash Preview**.
+API REST para chatbot com **Retrieval-Augmented Generation (RAG)** usando o SDK `google-genai` e o modelo **Gemini 3 Flash Preview**.
 
-## 🚀 O que foi feito
-1.  **Migração de SDK:** Atualização da biblioteca legada `google-generativeai` para a nova e performática `google-genai` (Padrão 2026).
-2.  **Configuração de Ambiente:** Estruturação de variáveis de ambiente para gerenciar chaves de API e seleção dinâmica de modelos.
-3.  **Tratamento de Erros:** Implementação de lógica para lidar com o erro `429 Resource Exhausted` e limites de cota da camada gratuita/preview.
-4.  **Lógica de RAG Simples:** Criação de um sistema que utiliza a ampla janela de contexto do Gemini para processar documentos locais como base de conhecimento.
+> Desenvolvido por **InsurAI Squad (Lilian e Leandro)** — Desafio 2 i2a2 Academy 2026.
 
 ---
 
-## 🛠️ Requisitos
+## 📁 Estrutura do Projeto
 
-* **Python 3.12+**
-* **Google API Key** (Obtida no [Google AI Studio](https://aistudio.google.com/))
-
-### Instalação das Dependências
-```bash
-pip install -U google-genai
+```
+.
+├── api/
+│   ├── __init__.py
+│   └── routes.py         # Endpoints FastAPI
+├── documents/            # Base de conhecimento (.txt, .md, .csv, .json)
+├── rag/
+│   ├── __init__.py
+│   ├── generator.py      # Geração de resposta com Gemini
+│   ├── loader.py         # Carregamento de documentos
+│   └── retriever.py      # Recuperação de chunks relevantes
+├── .env.example          # Modelo do arquivo de ambiente
+├── config.py             # Variáveis de ambiente e configurações
+├── main.py               # Ponto de entrada FastAPI
+├── pyproject.toml        # Configuração do Poetry
+├── poetry.lock           # Versões fixas de dependências
+└── README.md
 ```
 
-### Configuração das Variáveis de Ambiente
-Para que o projeto funcione, exporte as seguintes variáveis no seu terminal ou adicione ao seu arquivo .bashrc / .env:
+---
+
+## 🚀 Instalação com Poetry
+
+### 1. Instalar o Poetry
+Se ainda não tiver o Poetry instalado:
 
 ```bash
-# Sua chave de API do Google
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+### 2. Instalar dependências do projeto
+
+type:
+
+```bash
+poetry install
+```
+
+### 3. Ativar o ambiente virtual do Poetry
+
+```bash
+poetry shell
+```
+
+> Alternativamente, execute comandos dentro do ambiente gerenciado pelo Poetry com `poetry run`.
+
+### 4. Configurar variáveis de ambiente
+
+```bash
+cp .env.example .env
+# Edite .env e insira sua GOOGLE_API_KEY
+```
+
+Ou exporte diretamente:
+
+```bash
 export GOOGLE_API_KEY="sua_chave_aqui"
-# Modelo utilizado (Preview de última geração)
 export GEMINI_MODEL="gemini-3-flash-preview"
 ```
 
-### ⚙️ Configuração das Variáveis de Ambiente
-Para que o projeto funcione, exporte as seguintes variáveis no seu terminal ou adicione ao seu arquivo .bashrc / .env:
+### 5. Iniciar o servidor
+
+Com o ambiente do Poetry ativado:
 
 ```bash
-# Sua chave de API do Google
-export GOOGLE_API_KEY="sua_chave_aqui"
-
-# Modelo utilizado (Preview de última geração)
-export GEMINI_MODEL="gemini-3-flash-preview"
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### ⚠️ Notas sobre Limites de Uso (Quota)
-Como estamos a utilizar o modelo Gemini 3 Flash Preview, é comum encontrar o erro 429 RESOURCE_EXHAUSTED.
+Ou usando `poetry run`:
 
-Causa: O modelo está em fase de pré-lançamento e possui limites de requisições por minuto (RPM) reduzidos.
+```bash
+poetry run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-Solução: Se o erro persistir, aguarde 60 segundos entre as execuções ou altere a variável GEMINI_MODEL para gemini-1.5-flash para testes de desenvolvimento contínuo.
+---
 
-#### Desenvolvido por InsurAI Squad (Lilian e Leandro) - Desafio 2 i2a2 academy 2026.
+## 📡 Endpoints
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `GET` | `/api/v1/` | Status da API |
+| `POST` | `/api/v1/chat` | Enviar pergunta ao chatbot |
+| `GET` | `/api/v1/documents` | Listar documentos carregados |
+| `POST` | `/api/v1/documents/upload` | Upload de novo documento |
+| `DELETE` | `/api/v1/documents/{filename}` | Remover documento |
+
+Documentação interativa: http://localhost:8000/docs
+
+---
+
+## 💬 Exemplo de uso
+
+### Chat
+
+```bash
+curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Como funciona o RAG?", "top_k": 3}'
+```
+
+### Resposta esperada
+
+```json
+{
+  "question": "Como funciona o RAG?",
+  "answer": "O RAG (Retrieval-Augmented Generation) funciona em três etapas...",
+  "model_used": "gemini-3-flash-preview",
+  "sources": ["exemplo.md"],
+  "retries": 0,
+  "error": null
+}
+```
+
+---
+
+## ⚠️ Tratamento de Erros 429 (RESOURCE_EXHAUSTED)
+
+O sistema pode lidar com erros de cota retornando:
+
+1. **Retry automático** com espera exponencial.
+2. **Fallback de modelo** quando o modelo principal falha.
+3. **Configurações adicionais** via `MAX_RETRIES` e `RETRY_WAIT_SECONDS`.
+
+---
+
+## 📄 Formatos de Documento Suportados
+
+- `.txt` — Texto simples
+- `.md` — Markdown
+- `.csv` — Dados tabulares
+- `.json` — Dados estruturados
+
+Use a pasta `documents/` ou o endpoint `/api/v1/documents/upload` para adicionar novos arquivos.
