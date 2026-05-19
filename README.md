@@ -13,7 +13,7 @@ API REST para chatbot com **Retrieval-Augmented Generation (RAG)** usando o SDK 
 ├── api/
 │   ├── __init__.py
 │   └── routes.py         # Endpoints FastAPI
-├── documents/            # Base de conhecimento (.txt, .md, .csv, .json)
+├── documents/            # Base de conhecimento (.txt, .md, .csv, .json), incluindo FAQs estruturadas
 ├── rag/
 │   ├── __init__.py
 │   ├── generator.py      # Geração de resposta com Gemini
@@ -86,6 +86,8 @@ poetry run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ## 📡 Endpoints
 
+Esta API agora inclui suporte para FAQs categorizadas, fluxos de atendimento e atendimento direcionado ao segurado.
+
 | Método | Rota | Descrição |
 |--------|------|-----------|
 | `GET` | `/api/v1/` | Status da API |
@@ -93,6 +95,8 @@ poetry run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 | `GET` | `/api/v1/documents` | Listar documentos carregados |
 | `POST` | `/api/v1/documents/upload` | Upload de novo documento |
 | `DELETE` | `/api/v1/documents/{filename}` | Remover documento |
+| `GET` | `/api/v1/faq` | Listar perguntas frequentes carregadas |
+| `GET` | `/api/v1/faq/categories` | Listar categorias de FAQ |
 
 Documentação interativa: http://localhost:8000/docs
 

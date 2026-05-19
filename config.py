@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
+FAQ_FILE: str = os.getenv("FAQ_FILE", "faqs.json")
 
 # ── Modelos compatíveis com o SDK google-genai (API v1beta / 2025-2026) ──────
 # O SDK legado `google-generativeai` usava nomes como "gemini-1.5-flash".
@@ -20,11 +21,11 @@ GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3-flash-preview")
 
 # Fallback usado quando o modelo principal retorna 429 ou 404.
 # gemini-2.0-flash é estável e disponível na v1beta gratuitamente.
-FALLBACK_MODEL: str = os.getenv("FALLBACK_MODEL", "gemini-2.0-flash")
+FALLBACK_MODEL: str = os.getenv("FALLBACK_MODEL", "gemini-2.5-flash")
 
 DOCS_DIR: str = os.getenv("DOCS_DIR", "documents")
-MAX_RETRIES: int = int(os.getenv("MAX_RETRIES", "2"))
-RETRY_WAIT_SECONDS: int = int(os.getenv("RETRY_WAIT_SECONDS", "60"))
+MAX_RETRIES: int = int(os.getenv("MAX_RETRIES", "1"))
+RETRY_WAIT_SECONDS: int = int(os.getenv("RETRY_WAIT_SECONDS", "20"))
 
 if not GOOGLE_API_KEY:
     raise EnvironmentError(

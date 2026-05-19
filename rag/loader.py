@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 from typing import List
 
+from config import FAQ_FILE
+
 
 def load_documents(docs_dir: str) -> List[dict]:
     """
@@ -28,7 +30,11 @@ def load_documents(docs_dir: str) -> List[dict]:
         return documents
 
     for file_path in sorted(path.rglob("*")):
-        if file_path.is_file() and file_path.suffix.lower() in supported_extensions:
+        if (
+            file_path.is_file()
+            and file_path.suffix.lower() in supported_extensions
+            and file_path.name != FAQ_FILE
+        ):
             try:
                 content = file_path.read_text(encoding="utf-8")
                 if content.strip():

@@ -8,7 +8,7 @@ from typing import List, Optional
 import shutil
 from pathlib import Path
 
-from config import DOCS_DIR, GEMINI_MODEL
+from config import DOCS_DIR, FAQ_FILE, GEMINI_MODEL
 from rag.loader import (
     load_documents,
 )
@@ -18,6 +18,13 @@ from rag.retriever import (
 )
 from rag.generator import (
     generate_response,
+)
+from rag.faq import (
+    categorize_question,
+    find_best_faq_answer,
+    format_faq_context,
+    load_faqs,
+    summarize_faq_categories,
 )
 router = APIRouter()
 
@@ -35,8 +42,17 @@ class ChatResponse(BaseModel):
     answer: str
     model_used: str
     sources: List[str]
+    intent: Optional[str] = None
+    faq_match: bool = False
     retries: int
     error: Optional[str]
+
+
+class FAQItemResponse(BaseModel):
+    question: str
+    category: str
+    tags: List[str]
+    source: str
 
 
 class DocumentInfo(BaseModel):
@@ -71,13 +87,16 @@ async def chat(request: ChatRequest):
     """
     Endpoint principal do chatbot.
     1. Carrega documentos da base de conhecimento.
-    2. Recupera chunks relevantes para a pergunta.
-    3. Gera resposta com o Gemini usando o contexto recuperado.
+    2. Tenta corresponder a pergunta a uma FAQ categorizada.
+    3. Recupera chunks relevantes e gera resposta com Gemini quando necessário.
     """
-    # 1. Carregar documentos
+    # 1. Carregar contexto e FAQs
     documents = load_documents(DOCS_DIR)
+    faqs = load_faqs(DOCS_DIR, filename=FAQ_FILE)
+    faq_match = find_best_faq_answer(request.question, faqs)
+    intent = faq_match["category"] if faq_match else categorize_question(request.question)
 
-    # 2. Recuperar contexto relevante
+    # 2. Buscar contexto adicional nos documentos
     chunks = retrieve_relevant_chunks(
         query=request.question,
         documents=documents,
@@ -86,21 +105,71 @@ async def chat(request: ChatRequest):
     context = build_context_from_chunks(chunks)
     sources = [c["filename"] for c in chunks]
 
-    # 3. Gerar resposta
+    # 3. Montar resposta priorizando FAQ quando houver correspondência direta
+    if faq_match:
+        sources.append(faq_match.get("source", "FAQ de Seguros"))
+        if faq_match["score"] >= 0.65:
+            answer = (
+                f"{faq_match['answer']}\n\n"
+                f"Categoria detectada: {faq_match['category']}."
+            )
+            return ChatResponse(
+                question=request.question,
+                answer=answer,
+                model_used="FAQ_KB",
+                sources=sources,
+                intent=intent,
+                faq_match=True,
+                retries=0,
+                error=None,
+            )
+
+        faq_context = format_faq_context(faq_match)
+        full_context = f"{faq_context}\n\n{context}" if context else faq_context
+        result = generate_response(
+            question=request.question,
+            context=full_context,
+            model=request.model,
+        )
+        return ChatResponse(
+            question=request.question,
+            answer=result["answer"],
+            model_used=result["model_used"],
+            sources=sources,
+            intent=intent,
+            faq_match=True,
+            retries=result["retries"],
+            error=result["error"],
+        )
+
     result = generate_response(
         question=request.question,
         context=context,
         model=request.model,
     )
-
     return ChatResponse(
         question=request.question,
         answer=result["answer"],
         model_used=result["model_used"],
         sources=sources,
+        intent=intent,
+        faq_match=False,
         retries=result["retries"],
         error=result["error"],
     )
+
+
+@router.get("/faq", response_model=List[FAQItemResponse], summary="Listar perguntas frequentes")
+async def list_faqs():
+    """Retorna a lista de FAQs carregadas da base de conhecimento."""
+    return load_faqs(DOCS_DIR, filename=FAQ_FILE)
+
+
+@router.get("/faq/categories", response_model=List[str], summary="Listar categorias de FAQ")
+async def list_faq_categories():
+    """Retorna as categorias de FAQ detectadas na base de conhecimento."""
+    faqs = load_faqs(DOCS_DIR, filename=FAQ_FILE)
+    return summarize_faq_categories(faqs)
 
 
 @router.get("/documents", response_model=List[DocumentInfo], summary="Listar documentos carregados")
