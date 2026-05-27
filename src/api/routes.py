@@ -9,25 +9,25 @@ import shutil
 from pathlib import Path
 import uuid
 
-from config import DOCS_DIR, FAQ_FILE, GEMINI_MODEL
-from rag.loader import (
+from ..config import DOCS_DIR, FAQ_FILE, GEMINI_MODEL
+from ..rag.loader import (
     load_documents,
 )
-from rag.retriever import (
+from ..rag.retriever import (
     retrieve_relevant_chunks,
     build_context_from_chunks,
 )
-from rag.generator import (
+from ..rag.generator import (
     generate_response,
 )
-from rag.faq import (
+from ..rag.faq import (
     categorize_question,
     find_best_faq_answer,
     format_faq_context,
     load_faqs,
     summarize_faq_categories,
 )
-from rag.flows import (
+from ..rag.flows import (
     get_flow_by_category,
     get_initial_stage,
     get_next_stage,

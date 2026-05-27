@@ -10,7 +10,7 @@ from pathlib import Path
 # Adiciona a pasta pai ao path para importar módulos da aplicação
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from rag.flows import (
+from src.rag.flows import (
     get_flow_by_category,
     get_initial_stage,
     get_next_stage,

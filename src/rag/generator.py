@@ -12,7 +12,7 @@ from google import genai
 from google.genai import types as genai_types
 from google.genai import errors as genai_errors
 
-from config import GOOGLE_API_KEY, GEMINI_MODEL, FALLBACK_MODEL, MAX_RETRIES, RETRY_WAIT_SECONDS
+from ..config import GOOGLE_API_KEY, GEMINI_MODEL, FALLBACK_MODEL, MAX_RETRIES, RETRY_WAIT_SECONDS
 
 
 # Inicializa o cliente uma única vez (singleton)

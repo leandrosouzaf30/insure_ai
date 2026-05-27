@@ -6,7 +6,7 @@ Desenvolvido por InsurAI Squad (Lilian e Leandro) — Desafio 2 i2a2 Academy 202
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import router
+from .api.routes import router
 
 app = FastAPI(
     title="🤖 Chatbot RAG com Gemini",
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        "main:app",
+        "src.main:app",
         host="0.0.0.0",
         port=8000,
         reload=True,

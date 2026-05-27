@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from typing import List
 
-from config import FAQ_FILE
+from ..config import FAQ_FILE
 
 
 def load_documents(docs_dir: str) -> List[dict]:
