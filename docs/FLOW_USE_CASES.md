@@ -36,6 +36,8 @@ curl -X POST http://localhost:8000/api/v1/chat \
 
 ✅ **Validação**: `requires_escalation: true`
 
+> Observação: o `session_id` é gerado automaticamente como um UUID válido. Salve esse valor retornado e use-o nas chamadas subsequentes do fluxo. O placeholder `"string"` não deve ser aceito.
+
 #### 2. Confirmar Apólice
 
 ```bash

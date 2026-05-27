@@ -43,6 +43,21 @@ router = APIRouter()
 _sessions: Dict[str, Dict] = {}
 
 
+def normalize_session_id(session_id: Optional[str]) -> str:
+    """Retorna um UUID válido ou gera um novo quando a entrada é ausente ou inválida."""
+    if not session_id:
+        return str(uuid.uuid4())
+
+    normalized = session_id.strip().lower()
+    if normalized in {"string", "none", "null", "undefined"}:
+        return str(uuid.uuid4())
+
+    try:
+        return str(uuid.UUID(session_id))
+    except (ValueError, TypeError):
+        return str(uuid.uuid4())
+
+
 # ── Schemas ──────────────────────────────────────────────────────────────────
 
 class ChatRequest(BaseModel):
@@ -129,7 +144,7 @@ async def chat(request: ChatRequest):
     5. Rastreia progresso no fluxo de atendimento.
     """
     # 1. Criar/recuperar sessão
-    session_id = request.session_id or str(uuid.uuid4())
+    session_id = normalize_session_id(request.session_id)
     if session_id not in _sessions:
         _sessions[session_id] = {
             "category": None,

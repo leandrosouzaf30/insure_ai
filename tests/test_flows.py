@@ -10,6 +10,7 @@ from pathlib import Path
 # Adiciona a pasta pai ao path para importar módulos da aplicação
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.api.routes import normalize_session_id
 from src.rag.flows import (
     get_flow_by_category,
     get_initial_stage,
@@ -157,6 +158,23 @@ class TestFlowCategories:
         for question in test_questions:
             assert any(kw in question.lower() for kw in flow.validation_keywords), \
                 f"Palavras-chave não detectadas em: {question}"
+
+
+def test_normalize_session_id_handles_invalid_values():
+    """Garante que valores inválidos não são repetidos como session_id."""
+    uuid_from_none = normalize_session_id(None)
+    uuid_from_placeholder = normalize_session_id("string")
+    uuid_from_invalid = normalize_session_id("not-a-uuid")
+
+    assert uuid_from_none != ""
+    assert uuid_from_none != "string"
+    assert uuid_from_placeholder != "string"
+    assert uuid_from_invalid != "not-a-uuid"
+
+    # Confirma que o valor retornado é um UUID válido.
+    assert __import__("uuid").UUID(uuid_from_none)
+    assert __import__("uuid").UUID(uuid_from_placeholder)
+    assert __import__("uuid").UUID(uuid_from_invalid)
 
 
 class TestFlowContexts:
