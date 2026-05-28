@@ -1,0 +1,72 @@
+[
+  {
+    "question": "Como faço para registrar um sinistro?",
+    "answer": "Para registrar um sinistro, abra o aplicativo ou ligue para a nossa central de atendimento e forneça os dados do evento, incluindo data, local e documentos do veículo ou vítima.",
+    "category": "sinistro",
+    "tags": ["sinistro", "registro", "atendimento"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Quais documentos são necessários para abrir um sinistro?",
+    "answer": "São necessários documento de identificação, CNH, boletim de ocorrência (quando aplicável), apólice do seguro e fotos do dano.",
+    "category": "documentos",
+    "tags": ["documentos", "sinistro", "boletim"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Como funciona a renovação da apólice?",
+    "answer": "A renovação é automática quando todos os pagamentos e documentos estão em dia. Se houver pendência, você receberá um aviso antes do vencimento.",
+    "category": "apolice",
+    "tags": ["apólice", "renovação", "vencimento"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "O que está coberto pela minha apólice?",
+    "answer": "A cobertura depende do plano contratado. Consulte a apólice para detalhes de danos materiais, pessoais, assistência e exclusões específicas.",
+    "category": "cobertura",
+    "tags": ["cobertura", "plano", "exclusões"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Como faço para cancelar minha apólice?",
+    "answer": "Para cancelar a apólice, entre em contato com a nossa central, informe o número da apólice e valide sua identidade. O cancelamento pode gerar taxas conforme o contrato.",
+    "category": "apolice",
+    "tags": ["cancelamento", "apólice", "contrato"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Qual o prazo para receber a indenização?",
+    "answer": "O prazo depende da análise do sinistro. Normalmente, a indenização é paga em até 30 dias úteis após aprovação e entrega dos documentos completos.",
+    "category": "sinistro",
+    "tags": ["indenização", "prazo", "sinistro"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Posso parcelar o pagamento do seguro?",
+    "answer": "Sim, muitos planos permitem parcelamento. Verifique as opções disponíveis no seu contrato ou através do atendimento ao cliente.",
+    "category": "pagamento",
+    "tags": ["pagamento", "boleto", "parcelamento"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Como atualizo meus dados cadastrais?",
+    "answer": "Você pode atualizar seus dados pelo portal do cliente ou entrar em contato com a nossa equipe de suporte para fazer a alteração.",
+    "category": "atendimento",
+    "tags": ["cadastro", "dados", "suporte"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Onde encontro o número da minha apólice?",
+    "answer": "O número da apólice está no seu documento impresso ou na área do cliente do site/app. Se não localizar, entre em contato e teremos prazer em ajudar.",
+    "category": "apolice",
+    "tags": ["apólice", "número", "documento"],
+    "source": "FAQ de Seguros"
+  },
+  {
+    "question": "Como posso entrar em contato com o suporte?",
+    "answer": "Você pode entrar em contato pelo telefone, e-mail ou chat disponível no portal. Verifique os canais de atendimento informados na sua apólice.",
+    "category": "atendimento",
+    "tags": ["contato", "suporte", "telefone"],
+    "source": "FAQ de Seguros"
+  }
+]
